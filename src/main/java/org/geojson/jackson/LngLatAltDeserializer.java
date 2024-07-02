@@ -17,7 +17,7 @@ public class LngLatAltDeserializer extends JsonDeserializer<LngLatAlt> {
         if (jp.isExpectedStartArrayToken()) {
             return deserializeArray(jp, ctxt);
         }
-        throw ctxt.mappingException(LngLatAlt.class);
+        throw ctxt.wrongTokenException(jp, LngLatAlt.class, JsonToken.START_ARRAY, "Expected array");
     }
 
     protected LngLatAlt deserializeArray(JsonParser jp, DeserializationContext ctxt) throws IOException {
@@ -25,7 +25,7 @@ public class LngLatAltDeserializer extends JsonDeserializer<LngLatAlt> {
         node.setLongitude(extractDouble(jp, ctxt, false));
         node.setLatitude(extractDouble(jp, ctxt, false));
         node.setAltitude(extractDouble(jp, ctxt, true));
-        List<Double> additionalElementsList = new ArrayList<Double>();
+        List<Double> additionalElementsList = new ArrayList<>();
         while (jp.hasCurrentToken() && jp.getCurrentToken() != JsonToken.END_ARRAY) {
             double element = extractDouble(jp, ctxt, true);
             if (!Double.isNaN(element)) {
@@ -46,14 +46,14 @@ public class LngLatAltDeserializer extends JsonDeserializer<LngLatAlt> {
             if (optional)
                 return Double.NaN;
             else
-                throw ctxt.mappingException("Unexpected end-of-input when binding data into LngLatAlt");
+                throw ctxt.wrongTokenException(jp, LngLatAlt.class, JsonToken.NOT_AVAILABLE, "Unexpected end-of-input when binding data into LngLatAlt");
         } else {
             switch (token) {
                 case END_ARRAY:
                     if (optional)
                         return Double.NaN;
                     else
-                        throw ctxt.mappingException("Unexpected end-of-input when binding data into LngLatAlt");
+                        throw ctxt.wrongTokenException(jp, LngLatAlt.class, JsonToken.NOT_AVAILABLE, "Unexpected end-of-input when binding data into LngLatAlt");
                 case VALUE_NUMBER_FLOAT:
                     return jp.getDoubleValue();
                 case VALUE_NUMBER_INT:
@@ -61,8 +61,7 @@ public class LngLatAltDeserializer extends JsonDeserializer<LngLatAlt> {
                 case VALUE_STRING:
                     return jp.getValueAsDouble();
                 default:
-                    throw ctxt.mappingException(
-                            "Unexpected token (" + token.name() + ") when binding data into LngLatAlt");
+                    throw ctxt.wrongTokenException(jp, LngLatAlt.class, JsonToken.NOT_AVAILABLE, "Unexpected token (" + token.name() + ") when binding data into LngLatAlt");
             }
         }
     }
